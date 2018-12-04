@@ -1,3 +1,5 @@
+// naive approach (recursive, no cache)
+
 function calcVars(n) {
   if (n < 0) { throw new Error('the "n" param should not be negative'); }
 

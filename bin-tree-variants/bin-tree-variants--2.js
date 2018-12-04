@@ -1,3 +1,5 @@
+// recursive approach with cache
+
 const cache = {};
 
 function calcVars(n) {
@@ -36,11 +38,9 @@ function calcVars(n) {
 // console.log('n = 6: ', calcVars(6));
 
 var t0 = performance.now();
-// for (let i = 1; i <= 16; i++) {
-//   calcVars(i);
-// }
-calcVars(12800);
+const res = calcVars(400);
 var t1 = performance.now();
+console.log("Result is " + res + ".");
 console.log("Result is " + (t1 - t0) + " milliseconds.");
 
 /**
