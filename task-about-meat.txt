@@ -1,0 +1,51 @@
+﻿девочка ест мясо. есь прогноз цен и количество мяса которое ей нужно в день. можно закупать мясо впрок. какая минимально достаточная сумма нужна?
+
+
+
+
+
+
+import "./styles.css";
+
+/*
+  девочка ест мясо. 
+  есь прогноз цен и количество мяса которое ей нужно в день. 
+  можно закупать мясо впрок. какая минимально достаточная сумма нужна? 
+*/
+
+// the answer is 650
+
+const prices = [10, 11, 12, 9, 10, 15, 8];
+const meatDemand = [10, 10, 10, 10, 10, 10, 10];
+
+let sum = 0;
+let currMinPriceDayIdx = 0;
+
+while (currMinPriceDayIdx < prices.length) {
+  let priceCutoffIdx;
+  for (let j = currMinPriceDayIdx + 1; j < prices.length; j++) {
+    priceCutoffIdx = j;
+
+    const currMinPrice = prices[currMinPriceDayIdx];
+    if (prices[j] < currMinPrice) {
+      break;
+    }
+  }
+
+  let meatPricePerPeriod = 0;
+  for (let k = currMinPriceDayIdx; k < priceCutoffIdx; k++) {
+    meatPricePerPeriod = prices[currMinPriceDayIdx] * meatDemand[k];
+  }
+
+  sum += meatPricePerPeriod;
+  currMinPriceDayIdx = priceCutoffIdx;
+
+  console.log(sum);
+}
+
+document.getElementById("app").innerHTML = `
+<h1>Hello Vanilla!</h1>
+<div>
+  sum is ${sum}
+</div>
+`;
