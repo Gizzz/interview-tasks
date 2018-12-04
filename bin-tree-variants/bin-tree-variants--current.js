@@ -49,12 +49,12 @@ console.log("Result is " + (t1 - t0) + " milliseconds.");
  * n = 32  - 1 ms
  * 
  * n = 100 - 5 ms
- * n = 200 - 30 ms
- * n = 400 - 70 ms
- * n = 800 - 210 ms
- * n = 1600 - 720 ms
- * n = 3200 - 2650 ms
- * n = 6400 - 8024 ms
+ * n = 200 - 30 ms - 6x
+ * n = 400 - 70 ms - 2.3x
+ * n = 800 - 210 ms - 3x
+ * n = 1600 - 720 ms - 3.42x
+ * n = 3200 - 2650 ms - 3.68x
+ * n = 6400 - 8024 ms - 3.027x
  * n = 12800 - Maximum call stack size exceeded
  */
 
