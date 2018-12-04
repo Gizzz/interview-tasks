@@ -49,7 +49,7 @@ function calcTree(n) {
 // console.log('n = 6: ', calcVars(6));
 
 var t0 = performance.now();
-const res = calcVars(409600);
+const res = calcVars(400);
 var t1 = performance.now();
 console.log("Result is " + res + ".");
 console.log("Time is " + (t1 - t0) + " milliseconds.");

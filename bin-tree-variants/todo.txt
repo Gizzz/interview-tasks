@@ -1,6 +1,7 @@
 todo:
-  rewrite to use loops instead recursion
+  make imrerative solution to sublinear
 
 done:
   direct recursive solution
   use cache to store prev. calcs
+  rewrite to use loops instead recursion
