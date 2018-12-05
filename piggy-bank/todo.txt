@@ -1,0 +1,2 @@
+todo:
+  add coins count and type to result (which coins and how much)
