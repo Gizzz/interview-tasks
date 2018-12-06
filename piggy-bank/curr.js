@@ -4,17 +4,20 @@
 // key - mass of coins
 // value - result item or 'impossible'
 // result item - array - nominal to coin's count
-const massToResult_items = [];
+let massToResult_items = [];
 
 function main(mass, coins) {
-  // const coinsMass = pigFullMass - pigEmptyMass;
-  const coinsMass = mass;
+  // clear cache because coins changed
+  massToResult_items = [];
 
   const zeroResult = [];
   for (let i = 0; i < coins.length; i++) {
     zeroResult[coins[i].nominal] = 0;
   }
   massToResult_items.push(zeroResult);
+
+  // const coinsMass = pigFullMass - pigEmptyMass;
+  const coinsMass = mass;
 
   let lastAnswer;
   for (let i = 0; i <= coinsMass; i++) {
@@ -74,6 +77,12 @@ function findPrevResult(coin) {
   for (let i = massToResult_items.length - 1; i >= 0; i--) {
     let currResult = massToResult_items[i];
     if (currResult === 'impossible') { continue; }
+
+    // const isCoinCountZero = currResult[coin.nominal] === 0;
+    // if (isCoinCountZero) {
+    //   result = currResult;
+    //   break;
+    // }
     
     if (!nextRes) {
       nextRes = currResult;
@@ -81,7 +90,7 @@ function findPrevResult(coin) {
       const prevRes = currResult;
       const prevCoinCount = prevRes[coin.nominal];
       const nextCoinCount = nextRes[coin.nominal];
-      if (prevCoinCount === nextCoinCount - 1) {
+      if (prevCoinCount !== nextCoinCount) {
         result = nextRes;
         break;
       } else {
@@ -130,11 +139,45 @@ function calcResultMass(result) {
   return totalMass;
 }
 
-const pigEmptyMass = 10;
-const pigFullMass = 110;
-const coins = [
+// const pigEmptyMass = 10;
+// const pigFullMass = 110;
+
+console.log('tests from task descr');
+
+let mass = 100;
+let coins = [
   { nominal: 1, weight: 1 },
   { nominal: 30, weight: 50 },
 ];
+console.log(`main(${mass}) should be 60:`, main(mass, coins));
 
-console.log('main():', main(51, coins));
+mass = 100;
+coins = [
+  { nominal: 1, weight: 1 },
+  { nominal: 50, weight: 30 },
+];
+console.log(`main(${mass}) should be 100:`, main(mass, coins));
+
+mass = 5;
+coins = [
+  { nominal: 10, weight: 3 },
+  { nominal: 20, weight: 4 },
+];
+console.log(`main(${mass}) should be 'impossible':`, main(mass, coins));
+
+console.log('my tests // =================================================================');
+
+mass = 6;
+coins = [
+  { nominal: 10, weight: 3 },
+  { nominal: 20, weight: 4 },
+];
+console.log(`main(${mass}) should be 20:`, main(mass, coins));
+
+// mass = 5;
+// coins = [
+//   { nominal: 2, weight: 2 },
+//   { nominal: 3, weight: 3 },
+//   { nominal: 5, weight: 5 },
+// ];
+// console.log(`main(${mass}) should be 'impossible':`, main(mass, coins));
