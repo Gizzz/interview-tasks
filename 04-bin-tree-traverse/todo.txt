@@ -2,12 +2,12 @@ bin-tree-traverse task
 // ===================
 
 todo:
-  set ref for node - if there is any child on right side at same level
-    use the breadth-first traversal
+  write more test
 
 done:
-  set ref for node - only if parent node has right child
+  (limited) set ref for node - only if parent node has right child
     use the depth-first traversal
+  (complete) set ref for node - if there is any child on right side at same level
 
 ideas:
   cheat solution - keep track of parent ref on node

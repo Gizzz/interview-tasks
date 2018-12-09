@@ -1,22 +1,4 @@
-// // depth-first approach (limited solution - sets ref only if node is left child and its parent has right child)
-// // mutative solution
-// function traverseAndSetRefs(node, parent = null) {
-//   if (!node) { return; }
-
-//   node.closestRightSibling = parent && parent.right && node !== parent.right
-//     ? parent.right
-//     : null;
-  
-//   if (node.left) {
-//     traverseAndSetRefs(node.left, node);
-//   }
-
-//   if (node.right) {
-//     traverseAndSetRefs(node.right, node);
-//   }
-// }
-
-// breadth-first approach
+// depth-first approach (complete solution - sets ref for node if there is any child on right side at same level)
 function traverseAndSetRefs(root) {
   if (!root) { throw new Error('`root` param is required.'); }
 
@@ -26,7 +8,7 @@ function traverseAndSetRefs(root) {
     : root.right;
 
   while (nextNode) {
-    const sibling = findClosestRightSibling(root, nextNode);
+    const sibling = findClosestRightSibling(nextNode, root);
 
     nextNode.closestRightSibling = sibling ? sibling : null;
 
@@ -37,41 +19,73 @@ function traverseAndSetRefs(root) {
 function findNextNodeToTraverse(prevNode, root) {
   if (!prevNode || !root) { throw new Error('`prevNode` and `root` params are required.'); }
 
-  const [ _, nextNode] = findNextNodeToTraverse_inner(prevNode, root, false);
+  let isPrevNodeFound = false;
+
+  function findNextNodeToTraverse_inner(prevNode, currNode) {
+    if (!prevNode || !currNode) { throw new Error('`prevNode` and `currNode` params are required.'); }
+  
+    if (isPrevNodeFound) {
+      return currNode;
+    }
+  
+    if (currNode === prevNode) {
+      isPrevNodeFound = true;
+    }
+  
+    if (currNode.left) {
+      const nextNode = findNextNodeToTraverse_inner(prevNode, currNode.left);
+      if (nextNode) { return nextNode; }
+    }
+  
+    if (currNode.right) {
+      const nextNode = findNextNodeToTraverse_inner(prevNode, currNode.right);
+      if (nextNode) { return nextNode; }
+    }
+  
+    return null;
+  }
+
+  const nextNode = findNextNodeToTraverse_inner(prevNode, root);
   return nextNode;
 }
 
-function findNextNodeToTraverse_inner(prevNode, currNode, isPrevNodeFound = false) {
-  if (!prevNode || !currNode) { throw new Error('`prevNode` and `currNode` params are required.'); }
-
-  if (isPrevNodeFound) {
-    return [true, currNode]
+function findClosestRightSibling(prevNode, root) {
+  if (!prevNode || !root) {
+    throw new Error('`prevNode` and `root` params are required.');
   }
 
-  let isPrevNodeFound_local = isPrevNodeFound;
-  if (currNode === prevNode) {
-    isPrevNodeFound_local = true;
-  }
+  let isPrevNodeFound = false;
+  let prevNodeDepth = null;
 
-  if (currNode.left) {
-    const [isPrevNodeFound_result, nextNode] = findNextNodeToTraverse_inner(prevNode, currNode.left, isPrevNodeFound_local);
-    if (isPrevNodeFound_result && nextNode) {
-      return [true, nextNode];
-    } else {
-      isPrevNodeFound_local = isPrevNodeFound_result;
+  function findClosestRightSibling_inner(prevNode, currNode, depth) {
+    if (!prevNode || !currNode || !depth) {
+      throw new Error('`prevNode` and `currNode` and `depth` params are required.');
     }
-  }
-
-  if (currNode.right) {
-    const [isPrevNodeFound_result, nextNode] = findNextNodeToTraverse_inner(prevNode, currNode.right, isPrevNodeFound_local);
-    if (isPrevNodeFound_result && nextNode) {
-      return [true, nextNode];
-    } else {
-      isPrevNodeFound_local = isPrevNodeFound_result;
+  
+    if (isPrevNodeFound && prevNodeDepth === depth) {
+      return currNode;
     }
+  
+    if (currNode === prevNode) {
+      isPrevNodeFound = true;
+      prevNodeDepth = depth;
+    }
+  
+    if (currNode.left) {
+      const sibling = findClosestRightSibling_inner(prevNode, currNode.left, depth + 1);
+      if (sibling) { return sibling; }
+    }
+  
+    if (currNode.right) {
+      const sibling = findClosestRightSibling_inner(prevNode, currNode.right, depth + 1);
+      if (sibling) { return sibling; }
+    }
+  
+    return null;
   }
 
-  return [isPrevNodeFound_local, null];
+  const sibling = findClosestRightSibling_inner(prevNode, root, 1);
+  return sibling;
 }
 
 // ===========================================================================
@@ -340,6 +354,66 @@ console.log('curr - test results:');
 })();
 
 /**
+ * 5 nodes - variant 2
+ * 
+ *        O
+ *      /  \
+ *     O    O
+ *   /       \
+ *  O         O
+ * 
+ */
+(function test_5_2() {
+  const right_right = {
+    left: null,
+    right: null,
+    closestRightSibling: null,
+  };
+
+  const right = {
+    left: null,
+    right: right_right,
+    closestRightSibling: null,
+  };
+
+  const left = {
+    closestRightSibling: right,
+    left: {
+      left: null,
+      right: null,
+      closestRightSibling: right_right,
+    },
+    right: null,
+  };
+
+  const expected = {
+    closestRightSibling: null,
+    left: left,
+    right: right,
+  };
+
+  const actual = {
+    left: {
+      left: {
+        left: null,
+        right: null,
+      },
+      right: null,
+    },
+    right: {
+      left: null,
+      right: {
+        left: null,
+        right: null,
+      },
+    },
+  };
+
+  traverseAndSetRefs(actual);
+  assertShapeEquality(actual, expected, '5 nodes - variant 2');
+})();
+
+/**
  * 6 nodes - variant 1:
  * 
  *         O
@@ -411,3 +485,91 @@ console.log('curr - test results:');
     console.warn('❌ 6 nodes - variant 1');
   }
 })();
+
+/**
+ * 7 nodes - variant 1
+ * 
+ *         O
+ *      /     \
+ *     O       O
+ *   /  \    /  \
+ *  O    O  O    O
+ * 
+ */
+(function test_8() {
+  const right_right = {
+    left: null,
+    right: null,
+    closestRightSibling: null,
+  };
+
+  const right_left = {
+    left: null,
+    right: null,
+    closestRightSibling: right_right,
+  };
+
+  const right = {
+    left: right_left,
+    right: right_right,
+    closestRightSibling: null,
+  };
+
+  const left_right = {
+    left: null,
+    right: null,
+    closestRightSibling: right_left,
+  };
+
+  const left = {
+    closestRightSibling: right,
+    left: {
+      left: null,
+      right: null,
+      closestRightSibling: left_right,
+    },
+    right: left_right,
+  };
+
+  const expected = {
+    closestRightSibling: null,
+    left: left,
+    right: right,
+  };
+
+  const actual = {
+    left: {
+      left: {
+        left: null,
+        right: null,
+      },
+      right: {
+        left: null,
+        right: null,
+      },
+    },
+    right: {
+      left: {
+        left: null,
+        right: null,
+      },
+      right: {
+        left: null,
+        right: null,
+      },
+    },
+  };
+
+  traverseAndSetRefs(actual);
+  assertShapeEquality(actual, expected, '7 nodes - variant 1')
+})();
+
+// test helpers
+
+function assertShapeEquality(actual, expected, text) {
+  if (_.isEqual(actual, expected)) {
+    console.log('✔️ ' + text);
+  } else {
+    console.warn('❌ ' + text);
+  }
+}
