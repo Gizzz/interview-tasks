@@ -1,23 +1,84 @@
-// depth-first approach (limited solution - sets ref only if node is left child and its parent has right child)
-// mutative solution
-function traverseAndSetRefs(node, parent = null) {
-  if (!node) { return; }
+// // depth-first approach (limited solution - sets ref only if node is left child and its parent has right child)
+// // mutative solution
+// function traverseAndSetRefs(node, parent = null) {
+//   if (!node) { return; }
 
-  node.closestRightSibling = parent && parent.right && node !== parent.right
-    ? parent.right
-    : null;
+//   node.closestRightSibling = parent && parent.right && node !== parent.right
+//     ? parent.right
+//     : null;
   
-  if (node.left) {
-    traverseAndSetRefs(node.left, node);
-  }
+//   if (node.left) {
+//     traverseAndSetRefs(node.left, node);
+//   }
 
-  if (node.right) {
-    traverseAndSetRefs(node.right, node);
+//   if (node.right) {
+//     traverseAndSetRefs(node.right, node);
+//   }
+// }
+
+// breadth-first approach
+function traverseAndSetRefs(root) {
+  if (!root) { throw new Error('`root` param is required.'); }
+
+  root.closestRightSibling = null;
+  let nextNode = root.left
+    ? root.left
+    : root.right;
+
+  while (nextNode) {
+    const sibling = findClosestRightSibling(root, nextNode);
+
+    nextNode.closestRightSibling = sibling ? sibling : null;
+
+    nextNode = findNextNodeToTraverse(nextNode, root)
   }
 }
 
+function findNextNodeToTraverse(prevNode, root) {
+  if (!prevNode || !root) { throw new Error('`prevNode` and `root` params are required.'); }
+
+  const [ _, nextNode] = findNextNodeToTraverse_inner(prevNode, root, false);
+  return nextNode;
+}
+
+function findNextNodeToTraverse_inner(prevNode, currNode, isPrevNodeFound = false) {
+  if (!prevNode || !currNode) { throw new Error('`prevNode` and `currNode` params are required.'); }
+
+  if (isPrevNodeFound) {
+    return [true, currNode]
+  }
+
+  let isPrevNodeFound_local = isPrevNodeFound;
+  if (currNode === prevNode) {
+    isPrevNodeFound_local = true;
+  }
+
+  if (currNode.left) {
+    const [isPrevNodeFound_result, nextNode] = findNextNodeToTraverse_inner(prevNode, currNode.left, isPrevNodeFound_local);
+    if (isPrevNodeFound_result && nextNode) {
+      return [true, nextNode];
+    } else {
+      isPrevNodeFound_local = isPrevNodeFound_result;
+    }
+  }
+
+  if (currNode.right) {
+    const [isPrevNodeFound_result, nextNode] = findNextNodeToTraverse_inner(prevNode, currNode.right, isPrevNodeFound_local);
+    if (isPrevNodeFound_result && nextNode) {
+      return [true, nextNode];
+    } else {
+      isPrevNodeFound_local = isPrevNodeFound_result;
+    }
+  }
+
+  return [isPrevNodeFound_local, null];
+}
+
+// ===========================================================================
 // tests
-console.log('test results:');
+// ===========================================================================
+
+console.log('curr - test results:');
 
 /**
  * only root:
@@ -288,7 +349,7 @@ console.log('test results:');
  *  O    O  O
  * 
  */
-(function test_6() {
+(function test_7() {
   const right_left = {
     left: null,
     right: null,
