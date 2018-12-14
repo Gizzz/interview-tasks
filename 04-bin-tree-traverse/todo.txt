@@ -2,6 +2,7 @@ bin-tree-traverse task
 // ===================
 
 todo:
+  solve task in linear time ( O(N) )
   write more test
 
 done:
