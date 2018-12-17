@@ -18,31 +18,23 @@ function traverseNodesOnLevel(firstNodeOnCurrLevel) {
   let currNode = null;
 
   while (parent) {
-    if (parent.left) {
-      // do stuff
+    const nodes = [parent.left, parent.right];
 
-      currNode = parent.left;
-      if (!firstNodeOnNextLevel) { firstNodeOnNextLevel = currNode; }
+    nodes.forEach(node => {
+      if (!node) { return; }
+      
+      currNode = node;
+      
+      if (!firstNodeOnNextLevel) {
+        firstNodeOnNextLevel = currNode;
+      }
 
       if (prevNode) {
         prevNode.nextSibling = currNode;
       }
 
       prevNode = currNode;
-    }
-
-    if (parent.right) {
-      // do stuff
-
-      currNode = parent.right;
-      if (!firstNodeOnNextLevel) { firstNodeOnNextLevel = currNode; }
-
-      if (prevNode) {
-        prevNode.nextSibling = currNode;
-      }
-
-      prevNode = currNode;
-    }
+    });
 
     parent = parent.nextSibling;
   };
