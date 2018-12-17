@@ -2,13 +2,15 @@ bin-tree-traverse task
 // ===================
 
 todo:
-  solve task in linear time ( O(N) )
   write more test
 
 done:
   (limited) set ref for node - only if parent node has right child
     use the depth-first traversal
   (complete) set ref for node - if there is any child on right side at same level
+  solve task in linear time ( O(N) )
+    with DFS traverse (helper array)
+    with BFS (better memory usage)
 
 ideas:
   cheat solution - keep track of parent ref on node
