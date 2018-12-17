@@ -1,34 +1,57 @@
+// linear solution based on BFS (breadth first order traverse)
+
 function traverseAndSetRightLink(root) {
   if (!root) { throw new Error('root param is falsy.'); }
 
   root.nextSibling = null;
+  let firstNodeOnLevel = root;
 
-  // if (root.left && root.right) {
-  //   root.left.nextSibling = root.right;
-  // }
+  while (firstNodeOnLevel) {
+    firstNodeOnLevel = traverseNodesOnLevel(firstNodeOnLevel);
+  };
+}
 
-  // if (root.right) {
-  //   root.right.nextSibling = null;
-  // }
+function traverseNodesOnLevel(firstNodeOnCurrLevel) {
+  let firstNodeOnNextLevel = null;
+  let parent = firstNodeOnCurrLevel;
+  let prevNode = null;
+  let currNode = null;
 
-  // let firstNodeOnLevel = root.left ? root.left : root.right;
+  while (parent) {
+    if (parent.left) {
+      // do stuff
 
-  // if (!firstNodeOnLevel) { return; }
+      currNode = parent.left;
+      if (!firstNodeOnNextLevel) { firstNodeOnNextLevel = currNode; }
 
-  // let currNode = firstNodeOnLevel;
+      if (prevNode) {
+        prevNode.nextSibling = currNode;
+      }
 
-  // while (currNode.nextSibling) {
+      prevNode = currNode;
+    }
 
-  // }
+    if (parent.right) {
+      // do stuff
 
-  let parent = root;
-  let currNode = root.left ? root.left : root.right;
-  
-  if (currNode === parent.left && parent.right !== null) {
-    currNode.nextSibling = parent.right;
+      currNode = parent.right;
+      if (!firstNodeOnNextLevel) { firstNodeOnNextLevel = currNode; }
+
+      if (prevNode) {
+        prevNode.nextSibling = currNode;
+      }
+
+      prevNode = currNode;
+    }
+
+    parent = parent.nextSibling;
+  };
+
+  if (currNode) {
+    currNode.nextSibling = null;
   }
 
-  
+  return firstNodeOnNextLevel;
 }
 
 // ===========================================================================
@@ -62,3 +85,71 @@ const tree_2 = {
 traverseAndSetRightLink(tree_2);
 
 console.log(tree_2);
+
+const tree_3 = {
+  value: 1,
+  left: {
+    value: 2,
+    left: {
+      value: 4,
+      left: null,
+      right: null,
+    },
+    right: {
+      value: 5,
+      left: null,
+      right: null,
+    },
+  },
+  right: {
+    value: 3,
+    left: {
+      value: 6,
+      left: null,
+      right: null,
+    },
+    right: {
+      value: 7,
+      left: null,
+      right: null,
+    },
+  },
+};
+
+traverseAndSetRightLink(tree_3);
+
+console.log(tree_3);
+
+const tree_4 = {
+  value: 1,
+  left: {
+    value: 2,
+    left: {
+      value: 4,
+      left: null,
+      right: null,
+    },
+    // right: {
+    //   value: 5,
+    //   left: null,
+    //   right: null,
+    // },
+  },
+  right: {
+    value: 3,
+    // left: {
+    //   value: 6,
+    //   left: null,
+    //   right: null,
+    // },
+    right: {
+      value: 7,
+      left: null,
+      right: null,
+    },
+  },
+};
+
+traverseAndSetRightLink(tree_4);
+
+console.log(tree_4);
