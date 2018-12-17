@@ -1,3 +1,5 @@
+// linear solution based on DFS (depth first order traverse)
+
 function traverseAndSetRightLink(tree) {
   if (!tree) { throw new Error('`tree` param is falsy.') }
   
